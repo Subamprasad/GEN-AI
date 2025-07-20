@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asked me Anything </title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: #fff;
+      position: relative;
+    }
+    .background-image {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0;
+      background: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+      filter: brightness(0.6) blur(1px);
+    }
+    #star-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      margin: 0 0 1.5rem 0;
+      letter-spacing: 2px;
+    }
+    p {
+      font-size: 2rem;
+      margin: 0 0 2.5rem 0;
+      color: #e0e0e0;
+      max-width: 700px;
+    }
+    .cta-btn {
+      background: #3575ff;
+      color: #fff;
+      font-size: 2rem;
+      padding: 1rem 2.5rem;
+      border: none;
+      border-radius: 2.5rem;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 4px 24px rgba(53,117,255,0.2);
+      transition: background 0.2s, transform 0.2s;
+      text-decoration: none;
+    }
+    .cta-btn:hover {
+      background: #285bcc;
+      transform: translateY(-2px) scale(1.04);
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2rem; }
+      p { font-size: 1.1rem; }
+      .cta-btn { font-size: 1.1rem; padding: 0.7rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-image" id="bg-img"></div>
+  <canvas id="star-canvas"></canvas>
+  <div class="content">
+    <h1>Asked me Anything</h1>
+    <p>This AI text generator provides information accurate as of Monday, June 10, 2024. It does not offer real-time updates</p>
+    <a href="chat.html" class="cta-btn" target="_blank">Get Started</a>
+  </div>
+  <script>
+    // 3D Starfall effect
+    const canvas = document.getElementById('star-canvas');
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    canvas.width = w;
+    canvas.height = h;
+
+    // Parallax background movement
+    const bgImg = document.getElementById('bg-img');
+    let bgX = 50, bgY = 50;
+    let t = 0;
+    function animateBg() {
+      t += 0.002;
+      // Move in a slow, subtle circle
+      bgX = 50 + Math.sin(t) * 2; // range: 48-52
+      bgY = 50 + Math.cos(t) * 2; // range: 48-52
+      bgImg.style.backgroundPosition = `${bgX}% ${bgY}%`;
+      requestAnimationFrame(animateBg);
+    }
+    animateBg();
+
+    window.addEventListener('resize', () => {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+    });
+
+    const STAR_COUNT = 180;
+    const stars = [];
+    function randomBetween(a, b) { return a + Math.random() * (b - a); }
+    for (let i = 0; i < STAR_COUNT; i++) {
+      stars.push({
+        x: randomBetween(0, w),
+        y: randomBetween(0, h),
+        z: randomBetween(0.2, 1),
+        speed: randomBetween(0.7, 2.5),
+        size: randomBetween(0.7, 2.5),
+        opacity: randomBetween(0.5, 1)
+      });
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, w, h);
+      for (let star of stars) {
+        ctx.save();
+        ctx.globalAlpha = star.opacity;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size * star.z * 1.5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = '#fff';
+        ctx.shadowBlur = 8 * star.z;
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function updateStars() {
+      for (let star of stars) {
+        star.y += star.speed * star.z * 1.5;
+        star.x += Math.sin(star.y / 80) * 0.5 * star.z;
+        if (star.y > h + 10) {
+          star.y = -10;
+          star.x = randomBetween(0, w);
+          star.z = randomBetween(0.2, 1);
+          star.speed = randomBetween(0.7, 2.5);
+          star.size = randomBetween(0.7, 2.5);
+          star.opacity = randomBetween(0.5, 1);
+        }
+      }
+    }
+
+    function animate() {
+      updateStars();
+      drawStars();
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html> 

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat Output</title>
+  <style>
+    body {
+      background: #181c24;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .terminal-bar {
+      background: #23272f;
+      color: #8aff80;
+      padding: 0.7rem 1.2rem;
+      font-family: 'Consolas', monospace;
+      font-size: 1.1rem;
+      border-bottom: 2px solid #222;
+      letter-spacing: 1px;
+    }
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem 0.5rem 1rem 0.5rem;
+      background: #181c24;
+    }
+    .chat-box {
+      width: 100%;
+      max-width: 600px;
+      background: #23272f;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px #0004;
+      padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+      min-height: 200px;
+      margin-bottom: 1.5rem;
+      font-size: 1.15rem;
+      font-family: 'Consolas', monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #e0e0e0;
+    }
+    .user-input {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .user-input input {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border-radius: 8px 0 0 8px;
+      border: none;
+      font-size: 1.1rem;
+      outline: none;
+      background: #23272f;
+      color: #fff;
+    }
+    .user-input button {
+      padding: 0.8rem 1.5rem;
+      border-radius: 0 8px 8px 0;
+      border: none;
+      background: #3575ff;
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .user-input button:hover {
+      background: #285bcc;
+    }
+    .msg {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+    }
+    .msg.user {
+      justify-content: flex-end;
+    }
+    .msg.ai {
+      justify-content: flex-start;
+    }
+    .msg .bubble {
+      padding: 0.7rem 1.1rem;
+      border-radius: 10px;
+      max-width: 80%;
+      font-size: 1.08rem;
+      line-height: 1.5;
+    }
+    .msg.user .bubble {
+      background: #3575ff;
+      color: #fff;
+      margin-left: auto;
+    }
+    .msg.ai .bubble {
+      background: #23272f;
+      color: #8aff80;
+      margin-right: auto;
+      border: 1px solid #2e333d;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal-bar">PS C:\Users\subam\GENAI1&gt; node LLM.js</div>
+  <div class="chat-container">
+    <div class="chat-box" id="chat-box">
+      <div class="msg ai"><div class="bubble" id="ai-output">Loading AI response...</div></div>
+    </div>
+    <form class="user-input" id="user-form">
+      <input type="text" id="user-input" placeholder="Type your question..." autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+  <script type="module">
+    // Gemini API call (same as LLM.js)
+    import { GoogleGenAI } from 'https://esm.sh/@google/genai';
+    const ai = new GoogleGenAI({ apiKey: "AIzaSyCdT1PofzIFJiAX48s-bdkcNlpY4DTPS28" });
+
+    async function getAIResponse(prompt) {
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: prompt,
+        });
+        return response.text;
+      } catch (e) {
+        return 'Error: ' + e.message;
+      }
+    }
+
+    // On page load, show the output of LLM.js
+    const aiOutput = document.getElementById('ai-output');
+    getAIResponse("Explain how AI works in a few words").then(text => {
+      aiOutput.textContent = text;
+    });
+
+    // Chat functionality
+    const chatBox = document.getElementById('chat-box');
+    const userForm = document.getElementById('user-form');
+    const userInput = document.getElementById('user-input');
+
+    userForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const question = userInput.value.trim();
+      if (!question) return;
+      // Add user message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'msg user';
+      userMsg.innerHTML = `<div class="bubble">${question}</div>`;
+      chatBox.appendChild(userMsg);
+      userInput.value = '';
+      // Add AI loading message
+      const aiMsg = document.createElement('div');
+      aiMsg.className = 'msg ai';
+      const aiBubble = document.createElement('div');
+      aiBubble.className = 'bubble';
+      aiBubble.textContent = 'Thinking...';
+      aiMsg.appendChild(aiBubble);
+      chatBox.appendChild(aiMsg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      // Get AI response
+      const answer = await getAIResponse(question);
+      aiBubble.textContent = answer;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
+</body>
+</html> 
