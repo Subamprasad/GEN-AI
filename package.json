@@ -1,7 +1,15 @@
 {
   "name": "genai",
   "version": "1.0.0",
-  "description": "",
+  "description": "---",
+  "homepage": "https://github.com/Subamprasad/GEN-AI#readme",
+  "bugs": {
+    "url": "https://github.com/Subamprasad/GEN-AI/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Subamprasad/GEN-AI.git"
+  },
   "license": "ISC",
   "author": "",
   "type": "module",
@@ -11,6 +19,8 @@
   },
   "dependencies": {
     "@google/genai": "^1.10.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "readline-sync": "^1.4.10"
   }
 }
