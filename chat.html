@@ -24,13 +24,22 @@
       border-bottom: 2px solid #222;
       letter-spacing: 1px;
     }
+    .main-heading {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #8aff80;
+      margin: 2rem 0 1rem 0;
+      text-shadow: 0 0 10px rgba(138, 255, 128, 0.3);
+      letter-spacing: 2px;
+    }
     .chat-container {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 2rem 0.5rem 1rem 0.5rem;
+      padding: 0 0.5rem 1rem 0.5rem;
       background: #181c24;
     }
     .chat-box {
@@ -111,6 +120,7 @@
 </head>
 <body>
   <div class="terminal-bar">PS C:\Users\subam\GENAI1&gt; node LLM.js</div>
+  <h1 class="main-heading">Ask me Anything</h1>
   <div class="chat-container">
     <div class="chat-box" id="chat-box">
       <div class="msg ai"><div class="bubble" id="ai-output">Loading AI response...</div></div>
@@ -124,7 +134,6 @@
     // Gemini API call (same as LLM.js)
     import { GoogleGenAI } from 'https://esm.sh/@google/genai';
     const ai = new GoogleGenAI({ apiKey: "AIzaSyCdT1PofzIFJiAX48s-bdkcNlpY4DTPS28" });
-
     async function getAIResponse(prompt) {
       try {
         const response = await ai.models.generateContent({
@@ -136,18 +145,15 @@
         return 'Error: ' + e.message;
       }
     }
-
     // On page load, show the output of LLM.js
     const aiOutput = document.getElementById('ai-output');
     getAIResponse("Explain how AI works in a few words").then(text => {
       aiOutput.textContent = text;
     });
-
     // Chat functionality
     const chatBox = document.getElementById('chat-box');
     const userForm = document.getElementById('user-form');
     const userInput = document.getElementById('user-input');
-
     userForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const question = userInput.value.trim();
@@ -174,4 +180,4 @@
     });
   </script>
 </body>
-</html> 
+</html>
